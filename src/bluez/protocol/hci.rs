@@ -740,7 +740,13 @@ fn hci_acldata_pkt(i: &[u8]) -> IResult<&[u8], Message> {
             // the length of the message, which may span multiple packets
             let (i, plen) = try_parse!(i, le_u16);
             let (i, cid) = try_parse!(i, le_u16);
+
+            if dlen < 4 {
+                warn!("dlen below minimum size");
+                return Err(Err::Error(error_position!(i, ErrorKind::Custom(11))));
+            }
             let (i, data) = try_parse!(i, take!(dlen - 4));
+
             (i, Message::ACLDataPacket(ACLData {
                 handle,
                 cid,
