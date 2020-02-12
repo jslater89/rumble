@@ -171,6 +171,8 @@ pub struct PeripheralProperties {
     pub discovery_count: u32,
     /// True if we've discovered the device before
     pub has_scan_response: bool,
+    /// RSSI of the last received advertising packet.
+    pub rssi: i8,
 }
 
 /// Peripheral is the device that you would like to communicate with (the "server" of BLE). This

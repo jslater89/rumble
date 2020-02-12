@@ -135,6 +135,8 @@ impl Peripheral {
                     // TODO: reset service data
                 }
 
+                properties.rssi = info.rssi;
+
                 for datum in info.data.iter() {
                     match datum {
                         &LocalName(ref name) => {

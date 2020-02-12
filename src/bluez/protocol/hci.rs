@@ -31,7 +31,8 @@ mod tests {
                     LocalName(String::from("LEDBlue-EA964AC0 ")),
                     SlaveConnectionIntervalRange(16, 20),
                     TxPowerLevel(4),
-                ]
+                ],
+                rssi: -66_i8,
             }
         );
 
@@ -56,7 +57,8 @@ mod tests {
                     ServiceClassUUID16(0xFFF0),
                     ServiceClassUUID16(0xFFE5),
                     ServiceClassUUID16(0xFFE0),
-                ]
+                ],
+                rssi: -62_i8,
             }
         );
 
@@ -72,7 +74,7 @@ mod tests {
 
     #[test]
     fn test_le_advertising_info() {
-        let buf = [1,4,0,192,74,150,234,218,116,11,2,1,6,7,2,240,255,229,255,224,255];
+        let buf = [1,4,0,192,74,150,234,218,116,11,2,1,6,7,2,240,255,229,255,224,255,176];
 
         assert_eq!(le_advertising_info(&buf), Ok((&[][..], LEAdvertisingInfo {
             evt_type: 4,
@@ -86,6 +88,7 @@ mod tests {
                 ServiceClassUUID16(65520),
                 ServiceClassUUID16(65509),
                 ServiceClassUUID16(65504)],
+            rssi: -80_i8,
         })));
     }
 
@@ -258,7 +261,8 @@ pub struct LEAdvertisingInfo {
     pub evt_type: u8,
     pub bdaddr_type: u8,
     pub bdaddr: BDAddr,
-    pub data: Vec<LEAdvertisingData>
+    pub data: Vec<LEAdvertisingData>,
+    pub rssi: i8,
 }
 
 #[derive(Debug, PartialEq)]
@@ -550,9 +554,10 @@ named!(le_advertising_info<&[u8], LEAdvertisingInfo>,
            acc.extend(x);
            acc
        })) >>
+       rssi: le_i8 >>
        (
          LEAdvertisingInfo {
-           evt_type, bdaddr_type, bdaddr, data: data
+           evt_type, bdaddr_type, bdaddr, data: data, rssi,
          }
        )
     ));
